@@ -2,7 +2,7 @@
 
 //Configuration Middleware - Variables:
 const port = process.env.PORT || '3000';
-const socketPort = '3001';
+const socketPort = '3002';
 
 const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/echefdb';
 
