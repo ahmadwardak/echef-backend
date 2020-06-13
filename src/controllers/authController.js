@@ -6,14 +6,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const login = (req, res) => {
-    if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
-        error: 'Bad Request',
-        message: 'Http Request body must have password property'
-    });
-
     if (!Object.prototype.hasOwnProperty.call(req.body, 'username')) return res.status(400).json({
         error: 'Bad Request',
         message: 'Http request body must have username property'
+    });
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http Request body must have password property'
     });
 
     UserModel.findOne({ username: req.body.username }).exec()
