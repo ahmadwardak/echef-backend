@@ -1,5 +1,5 @@
 "use strict";
-
+require('dotenv').config()
 //Configuration Middleware - Variables:
 const port = process.env.PORT || '3000';
 const socketPort = '3002';
