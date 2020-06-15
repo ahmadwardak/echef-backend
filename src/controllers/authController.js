@@ -1,7 +1,7 @@
 "use strict";
 
 const config = require('../config/config');
-const UserModel = require('../models/userModel');
+const { UserModel, accounttypes, subscriptiontypes } = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -43,6 +43,11 @@ const register = (req, res) => {
         message: 'Http request body must have username property'
     });
 
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'fullName')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have fullName property'
+    });
+
     if (!Object.prototype.hasOwnProperty.call(req.body, 'password')) return res.status(400).json({
         error: 'Bad Request',
         message: 'Http request body must have password property'
@@ -51,6 +56,36 @@ const register = (req, res) => {
     if (!Object.prototype.hasOwnProperty.call(req.body, 'email')) return res.status(400).json({
         error: 'Bad Request',
         message: 'Http request body must have email property'
+    });
+
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'accountType')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have accountType property'
+    });
+
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'paymentOption')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have paymentOption property'
+    });
+
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'address')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have address property'
+    });
+
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'billingAddress')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have billingAddress property'
+    });
+
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'shippingAddress')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have shippingAddress property'
+    });
+
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'subscriptionType')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have subscriptionType property'
     });
 
     const user = Object.assign(req.body, { password: bcrypt.hashSync(req.body.password, 8) });
@@ -105,9 +140,20 @@ const logout = (req, res) => {
 };
 
 
+const listAccountTypes = (req, res) => {
+    res.status(200).json(accounttypes);
+};
+
+
+const listSubscriptionTypes = (req, res) => {
+    res.status(200).json(subscriptiontypes);
+};
+
 module.exports = {
     login,
     register,
     logout,
-    currentUser
+    currentUser,
+    listAccountTypes,
+    listSubscriptionTypes
 };

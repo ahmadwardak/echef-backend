@@ -2,6 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 const config = require('../config/config');
+const { UserModel } = require('../models/userModel');
 
 const allowCrossDomainRequests = (req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
