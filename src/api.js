@@ -12,6 +12,7 @@ const morgan = require('morgan');
 
 const auth = require('./routes/authRoute');
 const review = require('./routes/recipeReviewRoute');
+const recipe = require('./routes/recipeRoute');
 
 const api = express();
 
@@ -42,6 +43,7 @@ api.use(morgan('dev'));
 // API routes
 api.use('/auth', auth);
 api.use('/reviews', review);
+api.use('/recipe', recipe);
 
 
 //Static files
