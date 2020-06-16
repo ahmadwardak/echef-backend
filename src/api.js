@@ -43,7 +43,7 @@ api.use(morgan('dev'));
 // API routes
 api.use('/auth', auth);
 api.use('/reviews', review);
-api.use('/recipe', recipe);
+api.use('/recipes', recipe);
 
 
 //Static files

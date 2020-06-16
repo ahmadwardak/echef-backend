@@ -10,6 +10,8 @@ const RecipeController = require('../controllers/recipeController');
 router.post('/', RecipeController.create);
 //View a recipe
 router.get('/:id', RecipeController.read);
+//Get all recipes
+router.get('/',RecipeController.listRecipes);
 //Update a recipe
 router.put('/:id', RecipeController.update);
 //Delete a recipe
