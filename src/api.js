@@ -22,6 +22,7 @@ morgan.token('head', (req, res) => {
     return "Head of request:" + JSON.stringify(req.method)// req.body.name + req.body.number
 })
 
+const recipe = require('./routes/recipeRoute');
 
 const api = express();
 
@@ -58,6 +59,8 @@ api.use(morgan('dev'));
 api.use('/auth', auth);
 api.use('/reviews', review);
 api.use('/api', ingredients)
+api.use('/recipe', recipe);
+
 
 //Static files
 api.use('/', express.static('public'));
