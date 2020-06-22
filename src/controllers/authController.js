@@ -23,7 +23,7 @@ const login = (req, res) => {
             if (!isPasswordValid) return res.status(401).send({ token: null });
 
             // if user and password are valid then create a JWT TOKEN
-            const token = jwt.sign({ _id: user._id, username: user.username, email: user.email }, config.JwtSecret, {
+            const token = jwt.sign({ _id: user._id, username: user.username, email: user.email, accounttype: user.accountType }, config.JwtSecret, {
                 expiresIn: '24h'
             });
 

@@ -8,13 +8,12 @@ const helmet = require('helmet');
 const path = require('path');
 const cors = require('cors');
 const middlewares = require('./middlewares/middlewares');
-const morgan = require('morgan');
 
 const auth = require('./routes/authRoute');
 const review = require('./routes/recipeReviewRoute');
 const ingredients = require('./routes/ingredientRoute');
 // Morgan allows to log Http requests
-const morgan = require('morgan')
+const morgan = require('morgan');
 morgan.token('body', (req, res) => {
     return "Body of request:" + JSON.stringify(req.body)// req.body.name + req.body.number
 })
