@@ -64,6 +64,7 @@ const deleteIngredient = (request, response, next) => {
         .catch(error => next(error))
 }
 // Useless? We had it in the Class Diagram
+/* Unused
 const getTagsList = (request, response, next) => {
     console.log("Get specific ingredient's Tags")
     IngredientModel.findById(request.params.id).then(ingr => {
@@ -79,11 +80,12 @@ const getTagsList = (request, response, next) => {
     }
     )
 }
+*/
 
 module.exports = {
     getIngredient,
     getIngredients,
-    getTagsList,
+   // getTagsList,
     updateIngredient,
     deleteIngredient,
     createIngredient
