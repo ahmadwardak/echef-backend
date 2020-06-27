@@ -57,7 +57,8 @@ const RecipeSchema = new mongoose.Schema({
         default: Date.now
     },
     tags: [{
-        type: String
+        type: String,
+        required:true
     }]
 });
 
