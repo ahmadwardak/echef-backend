@@ -58,7 +58,7 @@ api.use(morgan('dev'));
 // API routes
 api.use('/auth', auth);
 api.use('/reviews', review);
-api.use('/api', ingredients)
+api.use('/ingredient', ingredients)
 api.use('/recipe', recipe);
 api.use('/recipes', recipe);
 api.use('/categories', category);

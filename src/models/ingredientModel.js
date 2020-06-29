@@ -12,18 +12,18 @@ const IngredientSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ingredientBrand: {
-        type: String,
-        required: true
-    },
-    unitPrice: {
-        type: Number,
-        required: true
-    },
-    tags: {
-        type: [String],
-        required: true
-    }
+    ingredientBrands: [
+    {
+        brandName: {
+            type: String,
+            required: true
+        },
+        price: {
+            type: Number,
+            required: true
+        }
+    }   
+    ]
 });
 
 IngredientSchema.set('versionKey', false);
