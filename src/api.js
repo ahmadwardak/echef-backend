@@ -23,6 +23,8 @@ morgan.token('head', (req, res) => {
 
 const recipe = require('./routes/recipeRoute');
 const category = require('./routes/categoryRoute');
+const order = require('./routes/orderRoute');
+const shoppingCart = require('./routes/shoppingCartRoute');
 
 const api = express();
 
@@ -62,6 +64,8 @@ api.use('/ingredient', ingredients)
 api.use('/recipe', recipe);
 api.use('/recipes', recipe);
 api.use('/categories', category);
+api.use('/order',order);
+api.use('/shoppingCart', shoppingCart);
 
 
 //Static files
