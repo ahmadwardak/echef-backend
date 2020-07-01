@@ -20,17 +20,29 @@ const login = (req, res) => {
 
             // check password
             const isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
-            if (!isPasswordValid) return res.status(401).send({ token: null });
+            if (!isPasswordValid) return res.status(404).send({ error: 'Username or Password incorrect', token: null });
 
             // if user and password are valid then create a JWT TOKEN
-            const token = jwt.sign({ _id: user._id, username: user.username, email: user.email, accounttype: user.accountType }, config.JwtSecret, {
+            const token = jwt.sign({
+
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                address: user.address,
+                billingaddress: user.billingAddress,
+                shippingaddress: user.shippingAddress,
+                accounttype: user.accountType,
+                subscriptiontype: user.subscriptionType,
+                fullname: user.fullName
+
+            }, config.JwtSecret, {
                 expiresIn: '24h'
             });
 
             res.status(200).json({ token: token });
         })
         .catch(error => res.status(404).json({
-            error: 'Username incorrect',
+            error: 'Username or Password incorrect',
             message: error.message
         }));
 
@@ -94,7 +106,18 @@ const register = (req, res) => {
         .then(user => {
 
             // Once registered successfully, then create JWT TOKEN
-            const token = jwt.sign({ _id: user._id, username: user.username, email: user.email }, config.JwtSecret, {
+            const token = jwt.sign({
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                address: user.address,
+                billingaddress: user.billingAddress,
+                shippingaddress: user.shippingAddress,
+                accounttype: user.accountType,
+                subscriptiontype: user.subscriptionType,
+                fullname: user.fullName
+
+            }, config.JwtSecret, {
                 expiresIn: '24h' // expires in 24 hours
             });
 
