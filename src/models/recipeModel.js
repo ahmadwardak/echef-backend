@@ -16,8 +16,7 @@ const RecipeSchema = new mongoose.Schema({
     },
     servingSize: {
         type: Number,
-        default: 2,
-        //required: true
+        default: 2
     },
     category:{
         type: String,
@@ -25,16 +24,11 @@ const RecipeSchema = new mongoose.Schema({
     },
     ingredients: [{
         ingredientID:{
-            type: mongoose.Schema.Types.ObjectId
-        },
-        ingredientName:{
-            type: String
+            type: mongoose.Schema.Types.ObjectId,
+            //ref: 'Ingredient'
         },
         ingredientQuantity: {
             type: Number
-        },
-        ingredientUnit:{
-            type: String
         },
         ingredientBrand:{
             type: String

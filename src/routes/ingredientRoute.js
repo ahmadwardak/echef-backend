@@ -5,10 +5,10 @@ const middlewares = require('../middlewares/middlewares');
 const  ingredientController  = require('../controllers/ingredientController');
 
 
-router.post('/ingredient', ingredientController.createIngredient);
-router.put('/ingredient/:id', ingredientController.updateIngredient);
-router.get('/ingredient/:id',ingredientController.getIngredient);
-router.get('/ingredient', ingredientController.getIngredients);
-router.delete('/ingredient/:id', ingredientController.deleteIngredient)
+router.post('/', ingredientController.createIngredient);
+router.put('/:id', ingredientController.updateIngredient);
+router.get('/:id',ingredientController.getIngredient);
+router.get('/', ingredientController.getIngredients);
+router.delete('/:id', ingredientController.deleteIngredient)
 
 module.exports = router;
