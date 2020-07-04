@@ -61,6 +61,7 @@ api.use(morgan('dev'));
 api.use('/auth', auth);
 api.use('/reviews', review);
 api.use('/ingredient', ingredients)
+api.use('/ingredients', ingredients)
 api.use('/recipe', recipe);
 api.use('/recipes', recipe);
 api.use('/categories', category);

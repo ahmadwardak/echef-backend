@@ -1,11 +1,12 @@
 "use strcit";
 
-const {RecipeModel,categories} = require('../models/recipeModel');
+const {RecipeModel,categories,tags} = require('../models/recipeModel');
 
 //Listing all categories
 const listCategories = (req, res) =>{
     res.status(200).json(categories);
 };
+
 
 //Creating a new recipe
 const create = async(req, res) => {
@@ -26,7 +27,7 @@ const create = async(req, res) => {
 const read   = (req, res) => {
     RecipeModel.findById(req.params.id).exec()
         .then(recipe => {
-            console.log(req);
+           // console.log(req);
             if (!recipe) return res.status(404).json({
                 error: 'Not Found',
                 message: `Recipe not found`
@@ -41,6 +42,7 @@ const read   = (req, res) => {
         }));
 
 };
+
 
 //Updating an existing recipe
 const update = (req, res) => {
@@ -83,11 +85,16 @@ const listRecipes = (req, res) => {
         }));
 };
 
+
+
+
+
 module.exports = {
     listCategories,
     create,
     read,
     update,
     remove,
-    listRecipes
+    listRecipes,
+   // getAllCategories
 };

@@ -16,5 +16,7 @@ router.get('/',RecipeController.listRecipes);
 router.put('/:id', RecipeController.update);
 //Delete a recipe
 router.delete('/:id', RecipeController.remove);
+//allTags
+//router.get('/tags',RecipeController.getAllCategories);
 
 module.exports = router;
