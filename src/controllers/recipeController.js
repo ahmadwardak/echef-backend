@@ -85,9 +85,15 @@ const listRecipes = (req, res) => {
         }));
 };
 
-
-
-
+//Listing all the recipes created by a Chef
+const listRecipesByChefID = (req, res) => {
+    RecipeModel.find({createdByChef: req.params.id})
+        .then(recipes => res.status(200).json(recipes))
+        .catch(error => res.status(500).json({
+            error: 'Internal server error',
+            message: error.message
+        }));
+};
 
 module.exports = {
     listCategories,
@@ -96,5 +102,6 @@ module.exports = {
     update,
     remove,
     listRecipes,
+    listRecipesByChefID
    // getAllCategories
 };

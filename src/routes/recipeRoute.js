@@ -12,6 +12,8 @@ router.post('/', RecipeController.create);
 router.get('/:id', RecipeController.read);
 //Get all recipes
 router.get('/',RecipeController.listRecipes);
+//Get all recipes by a chef
+router.get('/chef/:id', RecipeController.listRecipesByChefID);
 //Update a recipe
 router.put('/:id', RecipeController.update);
 //Delete a recipe
