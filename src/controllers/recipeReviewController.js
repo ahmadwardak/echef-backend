@@ -3,9 +3,12 @@
 const RecipeReviewModel = require('../models/recipeReviewModel');
 const { UserModel } = require('../models/userModel');
 
+
+
 const listReviews = (req, res) => {
     RecipeReviewModel.find({ recipe: req.params.recipe })
-        .populate('addedbyUser', '_id fullName').exec()
+        .populate('addedbyUser', '_id fullName')
+        .populate('recipe', '_id title').exec()
         .then(reviews => res.status(200).json(reviews))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -14,7 +17,8 @@ const listReviews = (req, res) => {
 };
 
 const getReview = (req, res) => {
-    RecipeReviewModel.findOne({ _id: req.params.id }).populate('addedbyUser', '_id fullName').exec()
+    RecipeReviewModel.findOne({ _id: req.params.id }).populate('addedbyUser', '_id fullName')
+        .populate('recipe', '_id title').exec()
         .then(review => res.status(200).json(review))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -24,6 +28,7 @@ const getReview = (req, res) => {
 
 
 const addReview = async (req, res) => {
+    console.log(req.file);
 
     if (Object.keys(req.body).length === 0) return res.status(400).json({
         error: 'Bad Request',
@@ -62,10 +67,21 @@ const addReview = async (req, res) => {
         message: 'Http request body must have valueForMoneyRating property'
     });
 
-    let review = { ...req.body, recipe: req.params.recipe };
+    const reqFiles = [];
+    const url = req.protocol + '://' + req.get('host');
+    if (req.files) {
+        for (var i = 0; i < req.files.length; i++) {
+            reqFiles.push(url + '/public/uploads/reviews/' + req.files[i].filename)
+        }
+    }
+    let review = {
+        ...req.body,
+        fileCollection: reqFiles
+    };
     try {
         review = await RecipeReviewModel.create(review);
-        review = await review.populate('addedbyUser', '_id fullName').execPopulate();
+        review = await review.populate('addedbyUser', '_id fullName')
+            .populate('recipe', '_id title').execPopulate();
         res.status(201).json({ message: review });
     } catch (error) {
         res.status(500).json({
@@ -123,7 +139,8 @@ const editReview = async (req, res) => {
                 valueForMoneyRating: req.body.valueForMoneyRating
             },
             { runValidators: true, new: true })
-            .populate('addedbyUser', '_id fullName').exec();
+            .populate('addedbyUser', '_id fullName')
+            .populate('recipe', '_id title').exec();
         if (!review) {
             return res.status(404).json({
                 error: 'Not Found',
