@@ -28,7 +28,6 @@ const getReview = (req, res) => {
 
 
 const addReview = async (req, res) => {
-    console.log(req.file);
 
     if (Object.keys(req.body).length === 0) return res.status(400).json({
         error: 'Bad Request',
@@ -67,22 +66,33 @@ const addReview = async (req, res) => {
         message: 'Http request body must have valueForMoneyRating property'
     });
 
-    const reqFiles = [];
+    const videoTypes = ['mp4', 'mov', 'wmv', 'avi', 'mpg'];
+
+    const reqImageFiles = [];
+    const reqVideoFiles = [];
     const url = req.protocol + '://' + req.get('host');
-    if (req.files) {
+    if (req.files.length > 0) {
         for (var i = 0; i < req.files.length; i++) {
-            reqFiles.push(url + '/public/uploads/reviews/' + req.files[i].filename)
+            var filetype = req.files[i].filename.substr(req.files[i].filename.lastIndexOf('.') + 1);
+            filetype = videoTypes.includes(filetype) ? 'video' : 'image';
+
+            if (filetype === 'image') {
+                reqImageFiles.push(url + '/public/uploads/reviews/' + req.files[i].filename)
+            } else if (filetype === 'video') {
+                reqVideoFiles.push(url + '/public/uploads/reviews/' + req.files[i].filename)
+            }
         }
     }
     let review = {
         ...req.body,
-        fileCollection: reqFiles
+        imageCollection: reqImageFiles,
+        videoCollection: reqVideoFiles
     };
     try {
         review = await RecipeReviewModel.create(review);
         review = await review.populate('addedbyUser', '_id fullName')
             .populate('recipe', '_id title').execPopulate();
-        res.status(201).json({ message: review });
+        res.status(201).json({ message: review, recipeID: review.recipe._id });
     } catch (error) {
         res.status(500).json({
             error: 'Internal server error',

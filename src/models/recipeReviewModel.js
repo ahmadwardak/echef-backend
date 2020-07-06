@@ -45,7 +45,10 @@ const RecipeReviewSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    fileCollection: {
+    imageCollection: {
+        type: Array,
+    },
+    videoCollection: {
         type: Array,
     }
 });
