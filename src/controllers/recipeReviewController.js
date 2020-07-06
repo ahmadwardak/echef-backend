@@ -3,9 +3,12 @@
 const RecipeReviewModel = require('../models/recipeReviewModel');
 const { UserModel } = require('../models/userModel');
 
+
+
 const listReviews = (req, res) => {
     RecipeReviewModel.find({ recipe: req.params.recipe })
-        .populate('addedbyUser', '_id fullName').exec()
+        .populate('addedbyUser', '_id fullName')
+        .populate('recipe', '_id title').exec()
         .then(reviews => res.status(200).json(reviews))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -14,7 +17,8 @@ const listReviews = (req, res) => {
 };
 
 const getReview = (req, res) => {
-    RecipeReviewModel.findOne({ _id: req.params.id }).populate('addedbyUser', '_id fullName').exec()
+    RecipeReviewModel.findOne({ _id: req.params.id }).populate('addedbyUser', '_id fullName')
+        .populate('recipe', '_id title').exec()
         .then(review => res.status(200).json(review))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -62,11 +66,33 @@ const addReview = async (req, res) => {
         message: 'Http request body must have valueForMoneyRating property'
     });
 
-    let review = { ...req.body, recipe: req.params.recipe };
+    const videoTypes = ['mp4', 'mov', 'wmv', 'avi', 'mpg'];
+
+    const reqImageFiles = [];
+    const reqVideoFiles = [];
+    const url = req.protocol + '://' + req.get('host');
+    if (req.files.length > 0) {
+        for (var i = 0; i < req.files.length; i++) {
+            var filetype = req.files[i].filename.substr(req.files[i].filename.lastIndexOf('.') + 1);
+            filetype = videoTypes.includes(filetype) ? 'video' : 'image';
+
+            if (filetype === 'image') {
+                reqImageFiles.push(url + '/public/uploads/reviews/' + req.files[i].filename)
+            } else if (filetype === 'video') {
+                reqVideoFiles.push(url + '/public/uploads/reviews/' + req.files[i].filename)
+            }
+        }
+    }
+    let review = {
+        ...req.body,
+        imageCollection: reqImageFiles,
+        videoCollection: reqVideoFiles
+    };
     try {
         review = await RecipeReviewModel.create(review);
-        review = await review.populate('addedbyUser', '_id fullName').execPopulate();
-        res.status(201).json({ message: review });
+        review = await review.populate('addedbyUser', '_id fullName')
+            .populate('recipe', '_id title').execPopulate();
+        res.status(201).json({ message: review, recipeID: review.recipe._id });
     } catch (error) {
         res.status(500).json({
             error: 'Internal server error',
@@ -123,7 +149,8 @@ const editReview = async (req, res) => {
                 valueForMoneyRating: req.body.valueForMoneyRating
             },
             { runValidators: true, new: true })
-            .populate('addedbyUser', '_id fullName').exec();
+            .populate('addedbyUser', '_id fullName')
+            .populate('recipe', '_id title').exec();
         if (!review) {
             return res.status(404).json({
                 error: 'Not Found',

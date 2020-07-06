@@ -3,6 +3,8 @@
 const mongoose = require('mongoose');
 const SchemaTypes = mongoose.SchemaTypes;
 
+const Float = require('mongoose-float').loadType(mongoose);
+
 const RecipeReviewSchema = new mongoose.Schema({
     addedbyUser: {
         type: mongoose.Schema.Types.ObjectId,
@@ -12,10 +14,11 @@ const RecipeReviewSchema = new mongoose.Schema({
     heading: {
         type: String,
         required: true,
-        maxlength: 100
+        maxlength: 50
     },
     recipe: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recipe',
         required: true
     },
     detail: {
@@ -24,19 +27,29 @@ const RecipeReviewSchema = new mongoose.Schema({
         maxlength: 1000
     },
     overallRating: {
-        type: SchemaTypes.Decimal128,
+        type: Float,
         min: 0,
         max: 5
     },
     qualityRating: {
-        type: SchemaTypes.Decimal128,
+        type: Float,
         min: 0,
         max: 5
     },
     valueForMoneyRating: {
-        type: SchemaTypes.Decimal128,
+        type: Float,
         min: 0,
         max: 5
+    },
+    dateCreated: {
+        type: Date,
+        default: Date.now
+    },
+    imageCollection: {
+        type: Array,
+    },
+    videoCollection: {
+        type: Array,
     }
 });
 

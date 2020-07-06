@@ -65,12 +65,13 @@ api.use('/ingredients', ingredients)
 api.use('/recipe', recipe);
 api.use('/recipes', recipe);
 api.use('/categories', category);
-api.use('/order',order);
+api.use('/order', order);
 api.use('/shoppingCart', shoppingCart);
 
 
 //Static files
 api.use('/', express.static('public'));
+api.use('/public/uploads/reviews', express.static('public/uploads/reviews'));
 
 //use morgan here to handle not found error for route not found..... 
 api.use((req, res, next) => {
