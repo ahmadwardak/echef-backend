@@ -1,9 +1,9 @@
 "use strcit";
 
-const { RecipeModel, categories, tags } = require('../models/recipeModel');
+const { RecipeModel, categories } = require('../models/recipeModel');
 
 //Listing all categories
-//comment from rashid
+//new comments in my branch....
 const listCategories = (req, res) => {
     res.status(200).json(categories);
 };
