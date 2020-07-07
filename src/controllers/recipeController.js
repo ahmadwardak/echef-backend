@@ -1,14 +1,15 @@
 "use strcit";
 
-const {RecipeModel,categories} = require('../models/recipeModel');
+const { RecipeModel, categories } = require('../models/recipeModel');
 
 //Listing all categories
-const listCategories = (req, res) =>{
+//new comments in my branch....
+const listCategories = (req, res) => {
     res.status(200).json(categories);
 };
 
 //Creating a new recipe
-const create = async(req, res) => {
+const create = async (req, res) => {
     if (Object.keys(req.body).length === 0) return res.status(400).json({
         error: 'Bad Request',
         message: 'The request body is empty'
@@ -23,7 +24,7 @@ const create = async(req, res) => {
 };
 
 //Viewing a recipe
-const read   = (req, res) => {
+const read = (req, res) => {
     RecipeModel.findById(req.params.id).exec()
         .then(recipe => {
             console.log(req);
@@ -44,17 +45,17 @@ const read   = (req, res) => {
 
 //Updating an existing recipe
 const update = (req, res) => {
-    if (Object.keys(req.body).length === 0)
-    {
+    if (Object.keys(req.body).length === 0) {
         return res.status(400).json({
             error: 'Bad Request',
             message: 'The request body is empty'
         });
     }
 
-    RecipeModel.findByIdAndUpdate(req.params.id,req.body,{
+    RecipeModel.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
-        runValidators: true}).exec()
+        runValidators: true
+    }).exec()
         .then(recipe => res.status(200).json(recipe))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -65,7 +66,7 @@ const update = (req, res) => {
 //Deleting a recipe
 const remove = (req, res) => {
     RecipeModel.findByIdAndRemove(req.params.id).exec()
-        .then(() => res.status(200).json({message: `Recipe with id${req.params.id} was deleted`}))
+        .then(() => res.status(200).json({ message: `Recipe with id${req.params.id} was deleted` }))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
             message: error.message
@@ -74,7 +75,7 @@ const remove = (req, res) => {
 
 //Listing all the recipes
 const listRecipes = (req, res) => {
-    RecipeModel.find({ })
+    RecipeModel.find({})
         .populate('createdByChef', '_id fullName').exec()
         .then(recipes => res.status(200).json(recipes))
         .catch(error => res.status(500).json({
