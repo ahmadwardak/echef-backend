@@ -1,6 +1,7 @@
 "use strcit";
 
 const { RecipeModel, categories } = require('../models/recipeModel');
+const _ = require('lodash');
 
 //Listing all categories
 //new comments in my branch....
@@ -26,7 +27,9 @@ const create = async (req, res) => {
 
 //Viewing a recipe
 const read = (req, res) => {
-    RecipeModel.findById(req.params.id).exec()
+    RecipeModel.findById(req.params.id)
+        .populate('recipereviews')
+        .exec()
         .then(recipe => {
             // console.log(req);
             if (!recipe) return res.status(404).json({
@@ -34,7 +37,13 @@ const read = (req, res) => {
                 message: `Recipe not found`
             });
 
-            res.status(200).json(recipe)
+            var total = 0;
+            for (var i = 0; i < _.size(recipe.recipereviews); i++) {
+                total += recipe.recipereviews[i].overallRating;
+            }
+            var avg = total / recipe.recipereviews.length;
+
+            res.status(200).json({ recipe: recipe, OverallRating: avg })
 
         })
         .catch(error => res.status(500).json({
