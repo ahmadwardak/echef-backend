@@ -87,12 +87,42 @@ const remove = (req, res) => {
 //Listing all the recipes
 const listRecipes = (req, res) => {
     RecipeModel.find({})
-        .populate('createdByChef', '_id fullName').exec()
-        .then(recipes => res.status(200).json(recipes))
+        .populate('createdByChef', '_id fullName')
+        .populate('recipereviews')
+        .exec()
+        .then(recipes => {
+            // console.log(req);
+            if (!recipes) return res.status(404).json({
+                error: 'Not Found',
+                message: `No receipes found`
+            });
+
+            recipes.map(function (recipe) {
+                var total = 0;
+                for (var i = 0; i < _.size(recipe.recipereviews); i++) {
+                    total += recipe.recipereviews[i].overallRating;
+                }
+                var avg = total / recipe.recipereviews.length;
+                recipe.set('OverallRating', avg, { strict: false });
+                return recipe;
+            });
+
+            res.status(200).json(recipes);
+
+        })
         .catch(error => res.status(500).json({
-            error: 'Internal server error',
+            error: 'Internal Server Error',
             message: error.message
         }));
+
+    // RecipeModel.find({})
+    //     .populate('createdByChef', '_id fullName')
+    //     .populate('recipereviews').exec()
+    //     .then(recipes => res.status(200).json(recipes))
+    //     .catch(error => res.status(500).json({
+    //         error: 'Internal server error',
+    //         message: error.message
+    //     }));
 };
 
 //Listing all the recipes created by a Chef
