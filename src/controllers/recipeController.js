@@ -1,6 +1,6 @@
 "use strcit";
 
-const { RecipeModel, categories } = require('../models/recipeModel');
+const { RecipeModel, categories, difficultyLevels } = require('../models/recipeModel');
 const _ = require('lodash');
 
 //Listing all categories
@@ -9,6 +9,9 @@ const listCategories = (req, res) => {
     res.status(200).json(categories);
 };
 
+const listLevels = (req, res) => {
+    res.status(200).json(difficultyLevels);
+};
 
 //Creating a new recipe
 const create = async (req, res) => {
@@ -137,6 +140,7 @@ const listRecipesByChefID = (req, res) => {
 
 module.exports = {
     listCategories,
+    listLevels,
     create,
     read,
     update,

@@ -65,5 +65,6 @@ RecipeSchema.set('versionKey', false);
 
 module.exports = {
     RecipeModel: mongoose.model('Recipe', RecipeSchema),
-    categories
+    categories,
+    difficultyLevels
 }
