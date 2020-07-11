@@ -12,6 +12,8 @@ router.post('/', RecipeController.create);
 router.get('/:id', RecipeController.read);
 //Get all recipes
 router.get('/',RecipeController.listRecipes);
+//Get newest N recipes
+router.get('/new/:amount',RecipeController.listNewRecipes);
 //Get all recipes by a chef
 router.get('/chef/:id', RecipeController.listRecipesByChefID);
 //Update a recipe

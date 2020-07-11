@@ -128,6 +128,21 @@ const listRecipes = (req, res) => {
     //     }));
 };
 
+//Listing newest N  recipes
+const listNewRecipes = (req, res) => {
+    //console.log("One")
+    RecipeModel.find({})
+        .sort("-dateCreated")
+        .limit(Number(req.params.amount))
+        .populate('createdByChef', '_id fullName').exec()
+        .then(recipes => res.status(200).json(recipes))
+        .catch(error => res.status(500).json({
+            error: 'Internal server error',
+            message: error.message
+        }));
+        //console.log("Three")
+};
+
 //Listing all the recipes created by a Chef
 const listRecipesByChefID = (req, res) => {
     RecipeModel.find({ createdByChef: req.params.id })
@@ -146,6 +161,7 @@ module.exports = {
     update,
     remove,
     listRecipes,
-    listRecipesByChefID
+    listRecipesByChefID,
+    listNewRecipes
     // getAllCategories
 };
