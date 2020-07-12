@@ -23,8 +23,10 @@ const create = async (req, res) => {
     let file = "";
     console.log(req.file);
     let url = req.protocol + '://' + req.get('host');
-    file = url + '/public/uploads/recipes/' + req.file.filename;
-            
+    if(req.file){
+        file = url + '/public/uploads/recipes/' + req.file.filename;
+    }
+    req.body.ingredients = JSON.parse(req.body.ingredients);        
     let recipe = {
         ...req.body,
         recipeImageURL: file,
