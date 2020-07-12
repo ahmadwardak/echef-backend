@@ -20,7 +20,16 @@ const create = async (req, res) => {
         message: 'The request body is empty'
     });
 
-    RecipeModel.create(req.body)
+    let file = "";
+    console.log(req.file);
+    let url = req.protocol + '://' + req.get('host');
+    file = url + '/public/uploads/recipes/' + req.file.filename;
+            
+    let recipe = {
+        ...req.body,
+        recipeImageURL: file,
+    };
+    RecipeModel.create(recipe)
         .then(recipe => res.status(201).json(recipe))
         .catch(error => res.status(500).json({
             error: 'Internal server error',

@@ -51,10 +51,9 @@ const RecipeSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    tags: [{
-        type: String,
-        required: true
-    }],
+    recipeImageURL: {
+        type: String
+    },
     recipereviews: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RecipeReview'
