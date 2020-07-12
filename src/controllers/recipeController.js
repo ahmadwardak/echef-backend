@@ -149,7 +149,7 @@ const listNewRecipes = (req, res) => {
             error: 'Internal server error',
             message: error.message
         }));
-        //console.log("Three")
+    //console.log("Three")
 };
 
 //Listing all the recipes created by a Chef
@@ -162,6 +162,29 @@ const listRecipesByChefID = (req, res) => {
         }));
 };
 
+
+//Viewing a recipe
+const readRecipeName = (req, res) => {
+    RecipeModel.findById(req.params.id)
+        .select('title')
+        .exec()
+        .then(recipe => {
+            // console.log(req);
+            if (!recipe) return res.status(404).json({
+                error: 'Not Found',
+                message: `Recipe not found`
+            });
+
+            res.status(200).json(recipe)
+
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        }));
+
+};
+
 module.exports = {
     listCategories,
     listLevels,
@@ -171,6 +194,7 @@ module.exports = {
     remove,
     listRecipes,
     listRecipesByChefID,
-    listNewRecipes
+    listNewRecipes,
+    readRecipeName
     // getAllCategories
 };
