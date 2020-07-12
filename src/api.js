@@ -23,6 +23,7 @@ morgan.token('head', (req, res) => {
 
 const recipe = require('./routes/recipeRoute');
 const category = require('./routes/categoryRoute');
+const levels = require('./routes/difficultyLevels');
 const order = require('./routes/orderRoute');
 const shoppingCart = require('./routes/shoppingCartRoute');
 
@@ -65,6 +66,7 @@ api.use('/ingredients', ingredients)
 api.use('/recipe', recipe);
 api.use('/recipes', recipe);
 api.use('/categories', category);
+api.use('/levels', levels);
 api.use('/order', order);
 api.use('/shoppingCart', shoppingCart);
 

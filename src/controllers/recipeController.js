@@ -1,6 +1,7 @@
 "use strcit";
 
-const { RecipeModel, categories } = require('../models/recipeModel');
+const { RecipeModel, categories, difficultyLevels } = require('../models/recipeModel');
+const _ = require('lodash');
 
 //Listing all categories
 //new comments in my branch....
@@ -8,6 +9,9 @@ const listCategories = (req, res) => {
     res.status(200).json(categories);
 };
 
+const listLevels = (req, res) => {
+    res.status(200).json(difficultyLevels);
+};
 
 //Creating a new recipe
 const create = async (req, res) => {
@@ -16,7 +20,18 @@ const create = async (req, res) => {
         message: 'The request body is empty'
     });
 
-    RecipeModel.create(req.body)
+    let file = "";
+    console.log(req.file);
+    let url = req.protocol + '://' + req.get('host');
+    if(req.file){
+        file = url + '/public/uploads/recipes/' + req.file.filename;
+    }
+    req.body.ingredients = JSON.parse(req.body.ingredients);        
+    let recipe = {
+        ...req.body,
+        recipeImageURL: file,
+    };
+    RecipeModel.create(recipe)
         .then(recipe => res.status(201).json(recipe))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -26,7 +41,9 @@ const create = async (req, res) => {
 
 //Viewing a recipe
 const read = (req, res) => {
-    RecipeModel.findById(req.params.id).exec()
+    RecipeModel.findById(req.params.id)
+        .populate('recipereviews')
+        .exec()
         .then(recipe => {
             // console.log(req);
             if (!recipe) return res.status(404).json({
@@ -34,7 +51,13 @@ const read = (req, res) => {
                 message: `Recipe not found`
             });
 
-            res.status(200).json(recipe)
+            var total = 0;
+            for (var i = 0; i < _.size(recipe.recipereviews); i++) {
+                total += recipe.recipereviews[i].overallRating;
+            }
+            var avg = total / recipe.recipereviews.length;
+
+            res.status(200).json({ recipe: recipe, OverallRating: avg })
 
         })
         .catch(error => res.status(500).json({
@@ -78,12 +101,57 @@ const remove = (req, res) => {
 //Listing all the recipes
 const listRecipes = (req, res) => {
     RecipeModel.find({})
+        .populate('createdByChef', '_id fullName')
+        .populate('recipereviews')
+        .exec()
+        .then(recipes => {
+            // console.log(req);
+            if (!recipes) return res.status(404).json({
+                error: 'Not Found',
+                message: `No receipes found`
+            });
+
+            recipes.map(function (recipe) {
+                var total = 0;
+                for (var i = 0; i < _.size(recipe.recipereviews); i++) {
+                    total += recipe.recipereviews[i].overallRating;
+                }
+                var avg = total / recipe.recipereviews.length;
+                recipe.set('OverallRating', avg, { strict: false });
+                return recipe;
+            });
+
+            res.status(200).json(recipes);
+
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        }));
+
+    // RecipeModel.find({})
+    //     .populate('createdByChef', '_id fullName')
+    //     .populate('recipereviews').exec()
+    //     .then(recipes => res.status(200).json(recipes))
+    //     .catch(error => res.status(500).json({
+    //         error: 'Internal server error',
+    //         message: error.message
+    //     }));
+};
+
+//Listing newest N  recipes
+const listNewRecipes = (req, res) => {
+    //console.log("One")
+    RecipeModel.find({})
+        .sort("-dateCreated")
+        .limit(Number(req.params.amount))
         .populate('createdByChef', '_id fullName').exec()
         .then(recipes => res.status(200).json(recipes))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
             message: error.message
         }));
+    //console.log("Three")
 };
 
 //Listing all the recipes created by a Chef
@@ -96,13 +164,39 @@ const listRecipesByChefID = (req, res) => {
         }));
 };
 
+
+//Viewing a recipe
+const readRecipeName = (req, res) => {
+    RecipeModel.findById(req.params.id)
+        .select('title')
+        .exec()
+        .then(recipe => {
+            // console.log(req);
+            if (!recipe) return res.status(404).json({
+                error: 'Not Found',
+                message: `Recipe not found`
+            });
+
+            res.status(200).json(recipe)
+
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        }));
+
+};
+
 module.exports = {
     listCategories,
+    listLevels,
     create,
     read,
     update,
     remove,
     listRecipes,
-    listRecipesByChefID
+    listRecipesByChefID,
+    listNewRecipes,
+    readRecipeName
     // getAllCategories
 };

@@ -2,8 +2,8 @@
 
 const mongoose = require('mongoose');
 
-const categories = ["Italian","Indian","Spanish","Mexican","American","German","Iranian","Brazilian","Japanese","Chinese"];
-const difficultyLevels = ["Easy","Intermediate","Hard"];
+const categories = ["Italian", "Indian", "Spanish", "Mexican", "American", "German", "Iranian", "Brazilian", "Japanese", "Chinese"];
+const difficultyLevels = ["Easy", "Intermediate", "Hard"];
 
 //Recipe Model Schema
 const RecipeSchema = new mongoose.Schema({
@@ -20,40 +20,43 @@ const RecipeSchema = new mongoose.Schema({
         default: 2,
         required: true
     },
-    difficulty:{
+    difficulty: {
         type: String,
         enum: difficultyLevels,
-        required:true
+        required: true
     },
-    category:{
+    category: {
         type: String,
         enum: categories,
         required: true
     },
     ingredients: [{
-        ingredientID:{
+        ingredientID: {
             type: mongoose.Schema.Types.ObjectId,
             //ref: 'Ingredient'
         },
         ingredientQuantity: {
             type: Number
         },
-        ingredientBrand:{
+        ingredientBrand: {
             type: String
         }
     }],
     createdByChef: {
         type: mongoose.Schema.Types.ObjectId,
         //ref: 'User'
-        required:true
+        required: true
     },
     dateCreated: {
         type: Date,
         default: Date.now
     },
-    tags: [{
-        type: String,
-        required:true
+    recipeImageURL: {
+        type: String
+    },
+    recipereviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'RecipeReview'
     }]
 });
 
@@ -61,5 +64,6 @@ RecipeSchema.set('versionKey', false);
 
 module.exports = {
     RecipeModel: mongoose.model('Recipe', RecipeSchema),
-    categories
+    categories,
+    difficultyLevels
 }

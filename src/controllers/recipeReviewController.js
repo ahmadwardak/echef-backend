@@ -1,6 +1,7 @@
 "use strict";
 
 const RecipeReviewModel = require('../models/recipeReviewModel');
+const { RecipeModel } = require('../models/recipeModel');
 const { UserModel } = require('../models/userModel');
 
 
@@ -90,6 +91,10 @@ const addReview = async (req, res) => {
     };
     try {
         review = await RecipeReviewModel.create(review);
+        const recipeSel = await RecipeModel.findOneAndUpdate({ _id: req.body.recipe }, { $addToSet: { 'recipereviews': review } }, function (error, success) {
+            //...
+        });
+
         review = await review.populate('addedbyUser', '_id fullName')
             .populate('recipe', '_id title').execPopulate();
         res.status(201).json({ message: review, recipeID: review.recipe._id });
