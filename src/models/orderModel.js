@@ -13,6 +13,7 @@ const OrderSchema = new mongoose.Schema({
     },
     customerID: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     },
     orderStatus: {
@@ -25,6 +26,7 @@ const OrderSchema = new mongoose.Schema({
     },
     shoppingCart: {
         type: mongoose.Schema.Types.ObjectId,
+        ref:'ShoppingCart',
         required: true
     },
     shipmentCost: {
@@ -57,5 +59,5 @@ const OrderSchema = new mongoose.Schema({
 OrderSchema.set('versionKey', false);
 
 module.exports = {
-    OrderModal: mongoose.model('Order', OrderSchema),
+    OrderModel: mongoose.model('Order', OrderSchema),
 }

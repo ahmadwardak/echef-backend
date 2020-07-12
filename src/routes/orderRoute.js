@@ -6,7 +6,7 @@ const router = express.Router();
 const OrderController = require('../controllers/orderController');
 
 //Create an order
-router.post('/', OrderController.createOrder);
+router.post('/', OrderController.checkOut);
 //View an order
 router.get('/:id', OrderController.viewOrder);
 //Cancel order

@@ -9,14 +9,15 @@ const ShoppingCartSchema = new mongoose.Schema({
         {
             recipeID: {
                 type: mongoose.Schema.Types.ObjectId,
+                ref:'Recipe',
                 required: true
             },
             recipeIngredients: [
                 {
                     ingredientID:{
                         type: mongoose.Schema.Types.ObjectId,
-                        required: true
-                        //ref: 'Ingredient'
+                        required: true,
+                        ref: 'Ingredient'
                     },
                     ingredientQuantity: {
                         type: Number,
@@ -37,6 +38,7 @@ const ShoppingCartSchema = new mongoose.Schema({
     ],
     customerID: {
         type: mongoose.Schema.Types.ObjectId,
+        ref:'User',
         required: true
     },
     totalPrice: {
@@ -48,5 +50,5 @@ const ShoppingCartSchema = new mongoose.Schema({
 ShoppingCartSchema.set('versionKey', false);
 
 module.exports = {
-    ShoppingCartModal: mongoose.model('ShoppingCart', ShoppingCartSchema),
+    ShoppingCartModel: mongoose.model('ShoppingCart', ShoppingCartSchema),
 }

@@ -1,6 +1,6 @@
 "use strcit";
 
-const {ShoppingCartModal} = require('../models/shoppingCartModal');
+const {ShoppingCartModel} = require('../models/shoppingCartModel');
 
 
 //add to shopping cart
@@ -10,7 +10,7 @@ const create = async(req, res) => {
         message: 'The request body is empty'
     });
 
-    ShoppingCartModal.create(req.body)
+    ShoppingCartModel.create(req.body)
         .then(cart => res.status(201).json(cart))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -19,8 +19,8 @@ const create = async(req, res) => {
 };
 
 //Viewing a shopping cart
-const read   = (req, res) => {
-    ShoppingCartModal.findById(req.params.id).exec()
+const getShoppingCartByUserID   = (req, res) => {
+    ShoppingCartModel.find({customerID:req.params.id}).exec()
         .then(cart => {
             console.log(req);
             if (!cart) return res.status(404).json({
@@ -48,7 +48,7 @@ const update = (req, res) => {
         });
     }
 
-    ShoppingCartModal.findByIdAndUpdate(req.params.id,req.body,{
+    ShoppingCartModel.findByIdAndUpdate(req.params.id,req.body,{
         new: true,
         runValidators: true}).exec()
         .then(cart => res.status(200).json(cart))
@@ -60,6 +60,6 @@ const update = (req, res) => {
 
 module.exports = {
     create,
-    read,
+    getShoppingCartByUserID,
     update
 };
