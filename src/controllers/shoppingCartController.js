@@ -39,7 +39,7 @@ const getShoppingCartByUserID   = (req, res) => {
 };
 
 //Updating cart
-const update = (req, res) => {
+const updateByUserID = (req, res) => {
     if (Object.keys(req.body).length === 0)
     {
         return res.status(400).json({
@@ -48,7 +48,7 @@ const update = (req, res) => {
         });
     }
 
-    ShoppingCartModel.findByIdAndUpdate(req.params.id,req.body,{
+    ShoppingCartModel.findOneAndUpdate({customerID:req.params.id},req.body,{
         new: true,
         runValidators: true}).exec()
         .then(cart => res.status(200).json(cart))
@@ -58,8 +58,10 @@ const update = (req, res) => {
         }));
 };
 
+
+
 module.exports = {
     create,
     getShoppingCartByUserID,
-    update
+    updateByUserID
 };

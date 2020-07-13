@@ -7,6 +7,6 @@ const ShoppingcartController = require('../controllers/shoppingCartController');
 
 router.post('/', ShoppingcartController.create);
 router.get('/:id', ShoppingcartController.getShoppingCartByUserID);
-router.put('/:id', ShoppingcartController.update);
+router.put('/:id', ShoppingcartController.updateByUserID);
 
 module.exports = router;

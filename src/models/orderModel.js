@@ -19,12 +19,12 @@ const OrderSchema = new mongoose.Schema({
     orderStatus: {
         type: String,
         enum: orderStatus,
-        required: true
+        default: 'Ordered'
     },
     dateShipped:{
         type: Date
     },
-    shoppingCart: {
+    shoppingCartID: {
         type: mongoose.Schema.Types.ObjectId,
         ref:'ShoppingCart',
         required: true
@@ -40,15 +40,34 @@ const OrderSchema = new mongoose.Schema({
     },
 
     shippingInfo: {
-        shippingAddress: {
+        FirstName:{
             type: String,
             required: true
         },
-        city:{
+        LastName:{
             type: String,
             required: true
         },
-        zipcode: {
+        AddressLine1: {
+            type: String,
+            required: true
+        },
+        AddressLine2:{
+            type: String
+        },
+        City:{
+            type: String,
+            required: true
+        },
+        Country:{
+            type: String,
+            required: true
+        },
+        Region:{
+            type: String,
+            required: true
+        },
+        Zipcode: {
             type: String,
             required:  true
         }
