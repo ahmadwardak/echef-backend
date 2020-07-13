@@ -74,6 +74,7 @@ api.use('/shoppingCart', shoppingCart);
 //Static files
 api.use('/', express.static('public'));
 api.use('/public/uploads/reviews', express.static('public/uploads/reviews'));
+api.use('/public/uploads/recipes', express.static('public/uploads/recipes'));
 
 //use morgan here to handle not found error for route not found..... 
 api.use((req, res, next) => {
