@@ -47,7 +47,7 @@ router.get('/new/:amount', RecipeController.listNewRecipes);
 //Get all recipes by a chef
 router.get('/chef/:id', RecipeController.listRecipesByChefID);
 //Update a recipe
-router.put('/:id', RecipeController.update);
+router.put('/:id', upload.single('recipeImageURL'), RecipeController.update);
 //Delete a recipe
 router.delete('/:id', RecipeController.remove);
 //Get Recipe Name
