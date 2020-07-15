@@ -40,7 +40,5 @@ router.post('/:recipe', upload.array('fileCollection', 2), RecipeReviewControlle
 router.get('/:recipe', RecipeReviewController.listReviews);
 //GET a review middlewares.checkAuthentication, 
 router.get('/:recipe/:id', RecipeReviewController.getReview);
-//UPDATE a review (still need a middleware to check ownership of review)
-router.put('/:recipe/:id', RecipeReviewController.editReview);
 
 module.exports = router;
