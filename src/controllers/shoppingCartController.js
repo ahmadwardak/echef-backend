@@ -57,11 +57,33 @@ const updateByUserID = (req, res) => {
             message: error.message
         }));
 };
+//get cart items count
+const getShoppingCartRecipeCountByUserID   = (req, res) => {
+    ShoppingCartModel.find({customerID:req.params.id}).exec()
+        .then(cart => {
+            console.log(req);
+            
+            var response = 0;
+            if(cart.length!=0){
+                cart[0].cartItems.forEach(element => {
+                    response = response + element.recipeIngredients.length;
+                });
+            }
+            res.status(200).json(response);
+
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        }));
+
+};
 
 
 
 module.exports = {
     create,
     getShoppingCartByUserID,
+    getShoppingCartRecipeCountByUserID,
     updateByUserID
 };
