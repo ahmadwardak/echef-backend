@@ -23,10 +23,10 @@ const create = async (req, res) => {
     let file = "";
     console.log(req.file);
     let url = req.protocol + '://' + req.get('host');
-    if(req.file){
+    if (req.file) {
         file = url + '/public/uploads/recipes/' + req.file.filename;
     }
-    req.body.ingredients = JSON.parse(req.body.ingredients);        
+    req.body.ingredients = JSON.parse(req.body.ingredients);
     let recipe = {
         ...req.body,
         recipeImageURL: file,
@@ -166,8 +166,8 @@ const listRecipesByChefID = (req, res) => {
 
 
 //Viewing a recipe
-const readRecipeName = (req, res) => {
-    RecipeModel.findById(req.params.id)
+const readRecipeName = async (req, res) => {
+    await RecipeModel.findById(req.params.id)
         .select('title')
         .exec()
         .then(recipe => {
