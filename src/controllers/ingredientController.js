@@ -4,9 +4,9 @@
 const IngredientModel = require('../models/ingredientModel');
 
 
-const getIngredient = (request, response, next) => {
+const getIngredient = async (request, response, next) => {
     console.log("Get specific ingredient")
-    IngredientModel.findById(request.params.id).then(ingr => {
+    await IngredientModel.findById(request.params.id).then(ingr => {
         if (ingr) {
             response.json(ingr)
         }
@@ -85,7 +85,7 @@ const getTagsList = (request, response, next) => {
 module.exports = {
     getIngredient,
     getIngredients,
-   // getTagsList,
+    // getTagsList,
     updateIngredient,
     deleteIngredient,
     createIngredient
