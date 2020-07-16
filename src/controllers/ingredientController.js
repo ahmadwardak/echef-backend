@@ -21,9 +21,9 @@ const getIngredient = async (request, response, next) => {
 
 }
 
-const getIngredients = (request, response, next) => {
+const getIngredients = async (request, response, next) => {
     console.log("get All ingredients")
-    IngredientModel.find({}).then(ingr => {
+    await IngredientModel.find({}).then(ingr => {
         response.json(ingr)
     })
 }
