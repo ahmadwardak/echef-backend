@@ -42,6 +42,10 @@ const RecipeSchema = new mongoose.Schema({
             type: String
         }
     }],
+    tags:{
+        type: [String],
+        default: ["noTags"]
+    },
     createdByChef: {
         type: mongoose.Schema.Types.ObjectId,
         //ref: 'User'
