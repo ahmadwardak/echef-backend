@@ -5,29 +5,12 @@ const stripe = require("stripe")("sk_test_51H3MpiKYLWJclmfxIrES4zC6SoxkQOIt79QYp
 const uuid = require("uuid");
 
 
-
-//Creating a new order
-const createOrder = async(req, res) => {
-    if (Object.keys(req.body).length === 0) return res.status(400).json({
-        error: 'Bad Request',
-        message: 'The request body is empty'
-    });
-
-    OrderModel.create(req.body)
-        .then(order => res.status(201).json(order))
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
-};
-
 const checkOut = async(req, res) => {
     console.log("Request:", req.body);
 
-    let error;
-    let status;
+    
     try {
-        const { shoppingCart, token } = req.body;
+        const { cart, orderDetails, token } = req.body;
 
         const customer = await stripe.customers.create({
             email: token.email,
@@ -37,18 +20,18 @@ const checkOut = async(req, res) => {
         const idempotency_key = uuid.v4();
         const charge = await stripe.charges.create(
         {
-            amount: shoppingCart.totalPrice * 100,
+            amount: cart.totalPrice * 100,
             currency: "eur",
             customer: customer.id,
             receipt_email: token.email,
             shipping: {
-                name: token.card.name,
+                name: orderDetails.LastName,
                 address: {
-                    line1: token.card.address_line1,
-                    line2: token.card.address_line2,
-                    city: token.card.address_city,
-                    country: token.card.address_country,
-                    postal_code: token.card.address_zip
+                    line1: orderDetails.AddressLine1,
+                    line2: orderDetails.AddressLine2,
+                    city: orderDetails.City,
+                    country: orderDetails.Country,
+                    postal_code: orderDetails.Zipcode
                 }
             }
       },
@@ -57,13 +40,38 @@ const checkOut = async(req, res) => {
       }
     );
     console.log("Charge:", { charge });
-    status = "success";
+    let orderReq ={
+        customerID:orderDetails.User,
+        shoppingCartID:cart.id,
+        shipmentCost:cart.shipmentCost,
+        totalCost: cart.totalPrice,
+        shippingInfo:{
+            FirstName:orderDetails.FirstName,
+            LastName:orderDetails.LastName,
+            AddressLine1:orderDetails.AddressLine1,
+            AddressLine2:orderDetails.AddressLine2,
+            City:orderDetails.City,
+            Country:orderDetails.Country,
+            Region:orderDetails.Region,
+            Zipcode:orderDetails.Zipcode
+        }
+    }
+    OrderModel.create(orderReq)
+        .then(order => res.status(200).json({
+            order,
+            status: 'success'}))
+        .catch(error => res.status(500).json({
+            status:'failure',
+            error: 'Internal server error',
+            message: error.message
+        }));
   } catch (error) {
-    console.error("Error:", error);
-    status = "failure";
+    res.status(400).json({
+        status: 'failure',
+        error: 'Bad Request',
+        message: 'The request body is empty'
+    });
   }
-
-  res.json({ error, status });
 
 };
 
