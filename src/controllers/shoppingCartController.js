@@ -79,11 +79,20 @@ const getShoppingCartRecipeCountByUserID   = (req, res) => {
 
 };
 
+const removeByUserID = (req, res) => {
+    ShoppingCartModel.findOneAndRemove({customerID:req.params.id}).exec()
+    .then((cart) => res.status(200).json({message: `Shopping cart was removed`}))
+        .catch(error => res.status(500).json({
+            error: 'Internal server error',
+            message: error.message
+        }));
+};
 
 
 module.exports = {
     create,
     getShoppingCartByUserID,
     getShoppingCartRecipeCountByUserID,
+    removeByUserID,
     updateByUserID
 };

@@ -17,10 +17,10 @@ const checkOut = async(req, res) => {
             source: token.id
         });
 
-        const idempotency_key = uuid.v4();
+        const idempotencyKey = uuid.v4();
         const charge = await stripe.charges.create(
         {
-            amount: cart.totalPrice * 100,
+            amount: (Math.round((cart.totalPrice + cart.shipmentCost)*100)/100) * 100,
             currency: "eur",
             customer: customer.id,
             receipt_email: token.email,
@@ -36,15 +36,16 @@ const checkOut = async(req, res) => {
             }
       },
       {
-        idempotency_key
+        idempotencyKey
       }
     );
     console.log("Charge:", { charge });
     let orderReq ={
         customerID:orderDetails.User,
-        shoppingCartID:cart.id,
+        cartItems:cart.cartItems,
+        itemsPrice:cart.totalPrice,
         shipmentCost:cart.shipmentCost,
-        totalCost: cart.totalPrice,
+        totalCost: Math.round((cart.totalPrice + cart.shipmentCost)*100)/100,
         shippingInfo:{
             FirstName:orderDetails.FirstName,
             LastName:orderDetails.LastName,

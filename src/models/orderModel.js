@@ -24,9 +24,39 @@ const OrderSchema = new mongoose.Schema({
     dateShipped:{
         type: Date
     },
-    shoppingCartID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref:'ShoppingCart',
+    cartItems: [
+            {
+                recipeID: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref:'Recipe',
+                    required: true
+                },
+                recipeIngredients: [
+                    {
+                        ingredientID:{
+                            type: mongoose.Schema.Types.ObjectId,
+                            required: true,
+                            ref: 'Ingredient'
+                        },
+                        ingredientQuantity: {
+                            type: Number,
+                            required: true
+                        },
+                        ingredientBrand:{
+                            type: String,
+                            required: true
+                        },
+                        price: {
+                            type: Number,
+                            required: true
+                        }
+                    }
+                ]
+    
+            }
+    ],
+    itemsPrice: {
+        type: Number,
         required: true
     },
     shipmentCost: {
