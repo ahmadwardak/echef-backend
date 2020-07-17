@@ -6,6 +6,10 @@ Both for the back end and front end application check
 
 * nodejs [official website](https://nodejs.org/en/) - nodejs includes [npm](https://www.npmjs.com/) (node package manager)
 
+For front-end go here:
+
+[Front-end](https://github.com/ahmadwardak/echef-frontend)
+
 Just for the backend application:
 
 * mongodb [official installation guide](https://docs.mongodb.org/manual/administration/install-community/)
@@ -14,7 +18,8 @@ Just for the backend application:
 
 Go to the backend folder:
 ```
-cd eChef/backend/
+git clone https://github.com/ahmadwardak/echef-backend.git
+cd echef-backend/
 ```
 
 **Install node dependencies**
