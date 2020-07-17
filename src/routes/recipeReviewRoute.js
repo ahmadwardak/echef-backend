@@ -35,7 +35,7 @@ const upload = multer({
 });
 
 //POST a new review
-router.post('/:recipe', upload.array('fileCollection', 2), RecipeReviewController.addReview);
+router.post('/:recipe', middlewares.checkAuthentication, upload.array('fileCollection', 2), RecipeReviewController.addReview);
 //GET list of reviews for a recipe
 router.get('/:recipe', RecipeReviewController.listReviews);
 //GET a review middlewares.checkAuthentication, 

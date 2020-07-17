@@ -2,14 +2,15 @@
 
 const express = require('express');
 const router = express.Router();
+const middlewares = require('../middlewares/middlewares');
 
 const OrderController = require('../controllers/orderController');
 
 //Create an order
-router.post('/', OrderController.checkOut);
+router.post('/', middlewares.checkAuthentication, OrderController.checkOut);
 //View an order
-router.get('/:id', OrderController.viewOrder);
+router.get('/:id', middlewares.checkAuthentication, OrderController.viewOrder);
 //Cancel order
-router.delete('/:id',OrderController.cancelOrder);
+router.delete('/:id', middlewares.checkAuthentication, OrderController.cancelOrder);
 
 module.exports = router;
