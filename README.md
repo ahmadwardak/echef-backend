@@ -1,2 +1,54 @@
 # eChef-backend
- 
+
+## Prerequisites
+
+Both for the back end and front end application check
+
+* nodejs [official website](https://nodejs.org/en/) - nodejs includes [npm](https://www.npmjs.com/) (node package manager)
+
+For front-end go here:
+
+[Front-end](https://github.com/ahmadwardak/echef-frontend)
+
+Just for the backend application:
+
+* mongodb [official installation guide](https://docs.mongodb.org/manual/administration/install-community/)
+
+## Setup (before first run)
+
+Go to the backend folder:
+```
+git clone https://github.com/ahmadwardak/echef-backend.git
+cd echef-backend/
+```
+
+**Install node dependencies**
+
+```
+npm install
+```
+
+**Set up your database**
+
+* Create a new directory where your database will be stored (it's a good idea to separate data and business logic - the data directory should be on a different place than your app)
+* Start the database server
+```
+mongod --dbpath relative/path/to/databases
+```
+
+You can use `./reset-db-and-start-db.sh` to create a directory in `../db/` and start mongo. Do not forget the set the environment variables below.
+
+**Set the environment variables**
+
+This variables are based in your local configuration
+```bash
+export PORT=3000
+export MONGODB_URI="mongodb://localhost:27017/echefdb"
+export JWT_SECRET="Secret0fEcH3f"
+```
+
+## Start the project
+
+```bash
+npm start
+```
