@@ -127,20 +127,35 @@ const remove = async (req, res) => {
         reviews.map(review => {
             review.imageCollection.map(img => {
                 let path = './public/uploads/reviews/' + img.substr(img.lastIndexOf('/') + 1);
-                fs.unlink(path, (err) => {
-                    if (err) throw err;
-                    // console.log('successfully deleted' + path);
-                });
-                // console.log(path);
+                fs.access(path, fs.F_OK, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+
+                    fs.unlink(path, (err) => {
+                        if (err) throw err;
+                        // console.log('successfully deleted' + path);
+                    });
+                    // console.log(path);
+                })
+
 
             });
             review.videoCollection.map(vid => {
                 let path = './public/uploads/reviews/' + vid.substr(vid.lastIndexOf('/') + 1);
-                fs.unlink(path, (err) => {
-                    if (err) throw err;
-                    // console.log('successfully deleted' + path);
-                });
-                // console.log(path);
+                fs.access(path, fs.F_OK, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+
+                    fs.unlink(path, (err) => {
+                        if (err) throw err;
+                        // console.log('successfully deleted' + path);
+                    });
+                    // console.log(path);
+                })
             });
         })
         await RecipeReviewModel.deleteMany({ recipe: recipe })
