@@ -76,17 +76,16 @@ const checkOut = async(req, res) => {
 
 };
 
-//Viewing an order
-const viewOrder   = (req, res) => {
-    OrderModel.findById(req.params.id).exec()
-        .then(order => {
+const getOrdersByUserID   = (req, res) => {
+    OrderModel.find({customerID:req.params.id}).exec()
+        .then(orders => {
             console.log(req);
-            if (!order) return res.status(404).json({
+            if (!orders) return res.status(404).json({
                 error: 'Not Found',
                 message: `Order not found`
             });
 
-            res.status(200).json(order)
+            res.status(200).json(orders)
 
         })
         .catch(error => res.status(500).json({
@@ -110,6 +109,6 @@ const cancelOrder = (req, res) => {
 
 module.exports = {
     checkOut,
-    viewOrder,
+    getOrdersByUserID,
     cancelOrder
 };

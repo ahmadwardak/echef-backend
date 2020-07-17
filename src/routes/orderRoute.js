@@ -9,7 +9,7 @@ const OrderController = require('../controllers/orderController');
 //Create an order
 router.post('/', middlewares.checkAuthentication, OrderController.checkOut);
 //View an order
-router.get('/:id', middlewares.checkAuthentication, OrderController.viewOrder);
+router.get('/:id', middlewares.checkAuthentication, OrderController.getOrdersByUserID);
 //Cancel order
 router.delete('/:id', middlewares.checkAuthentication, OrderController.cancelOrder);
 
