@@ -164,7 +164,20 @@ const remove = async (req, res) => {
                 error: 'Internal server error',
                 message: error.message
             }));
+        
+        if(recipe.recipeImageURL){
+            let path = './public/uploads/recipes/' + recipe.recipeImageURL.substr(recipe.recipeImageURL.lastIndexOf('/') + 1);
+                fs.access(path, fs.F_OK, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
 
+                    fs.unlink(path, (err) => {
+                        if (err) throw err;
+                    });
+                })
+        }
 
         await recipe.remove();
         res.status(200).json({ message: 'Recipe Deleted.' });
