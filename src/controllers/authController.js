@@ -124,7 +124,7 @@ const register = (req, res) => {
             res.status(200).json({ token: token });
         })
         .catch(error => {
-            if (error.code == 11000) { //error 11000 means duplicate record (in this case username or username already exist)
+            if (error.code == 11000) { //error 11000 means duplicate record (in this case username or email already exist)
                 res.status(400).json({
                     error: 'User exists',
                     message: error.message
@@ -140,6 +140,94 @@ const register = (req, res) => {
         });
 
 };
+
+
+
+const update = (req, res) => {
+
+    if (!Object.prototype.hasOwnProperty.call(req.body, 'username')) return res.status(400).json({
+        error: 'Bad Request',
+        message: 'Http request body must have username property'
+    });
+
+    UserModel.findOne({ username: req.body.username }).exec()
+        .then(user => {
+
+            if (!user) return res.status(404).json({
+                error: 'Not Found',
+                message: `User not found`
+            });
+
+            if (!Object.prototype.hasOwnProperty.call(req.body, 'fullName')) return res.status(400).json({
+                error: 'Bad Request',
+                message: 'Http request body must have fullName property'
+            });
+
+            if (!Object.prototype.hasOwnProperty.call(req.body, 'accountType')) return res.status(400).json({
+                error: 'Bad Request',
+                message: 'Http request body must have accountType property'
+            });
+
+            if (!Object.prototype.hasOwnProperty.call(req.body, 'address')) return res.status(400).json({
+                error: 'Bad Request',
+                message: 'Http request body must have address property'
+            });
+
+            if (!Object.prototype.hasOwnProperty.call(req.body, 'billingAddress')) return res.status(400).json({
+                error: 'Bad Request',
+                message: 'Http request body must have billingAddress property'
+            });
+
+            if (!Object.prototype.hasOwnProperty.call(req.body, 'shippingAddress')) return res.status(400).json({
+                error: 'Bad Request',
+                message: 'Http request body must have shippingAddress property'
+            });
+
+            var updateUser = {}
+            updateUser.fullName = req.body.fullName
+            updateUser.accountType = req.body.accountType;
+            updateUser.address = req.body.address;
+
+            updateUser.shippingAddress = req.body.shippingAddress;
+
+            updateUser.billingAddress = req.body.billingAddress;
+
+            if (Object.prototype.hasOwnProperty.call(req.body, 'password')) {
+                console.log(req.body.password)
+                updateUser.password = bcrypt.hashSync(req.body.password, 8)
+
+            };
+            UserModel.updateOne(
+                { username: req.body.username },
+                {
+                    $set: updateUser
+                })
+                .then(user => {
+
+
+                    res.status(200).json({ token: null });
+                })
+                .catch(error => {
+                    console.log(error);
+                    res.status(500).json({
+                        error: 'Internal server error',
+                        message: error.message
+                    })
+                });
+
+
+
+
+        })
+        .catch(error => res.status(500).json({
+            error: 'Internal Server Error',
+            message: error.message
+        }));
+
+
+
+};
+
 
 const currentUser = (req, res) => {
     UserModel.findById(req.userID).select('username').exec()
@@ -175,6 +263,7 @@ const listSubscriptionTypes = (req, res) => {
 module.exports = {
     login,
     register,
+    update,
     logout,
     currentUser,
     listAccountTypes,

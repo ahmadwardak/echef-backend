@@ -37,7 +37,7 @@ const upload = multer({
 
 
 //Create a recipe
-router.post('/', upload.single('recipeImageURL'), RecipeController.create);
+router.post('/', middlewares.checkAuthentication, upload.single('recipeImageURL'), RecipeController.create);
 //View a recipe
 router.get('/:id', RecipeController.read);
 //Get all recipes
@@ -45,11 +45,11 @@ router.get('/', RecipeController.listRecipes);
 //Get newest N recipes
 router.get('/new/:amount', RecipeController.listNewRecipes);
 //Get all recipes by a chef
-router.get('/chef/:id', RecipeController.listRecipesByChefID);
+router.get('/chef/:id', middlewares.checkAuthentication, RecipeController.listRecipesByChefID);
 //Update a recipe
-router.put('/:id', RecipeController.update);
+router.put('/:id', middlewares.checkAuthentication, upload.single('recipeImageURL'), RecipeController.update);
 //Delete a recipe
-router.delete('/:id', RecipeController.remove);
+router.delete('/:id', middlewares.checkAuthentication, RecipeController.remove);
 //Get Recipe Name
 router.get('/recipeName/:id', RecipeController.readRecipeName);
 //allTags

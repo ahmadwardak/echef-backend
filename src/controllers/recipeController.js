@@ -1,6 +1,7 @@
 "use strcit";
-
+const fs = require('fs');
 const { RecipeModel, categories, difficultyLevels } = require('../models/recipeModel');
+const RecipeReviewModel = require('../models/recipeReviewModel');
 const _ = require('lodash');
 
 //Listing all categories
@@ -23,10 +24,10 @@ const create = async (req, res) => {
     let file = "";
     console.log(req.file);
     let url = req.protocol + '://' + req.get('host');
-    if(req.file){
+    if (req.file) {
         file = url + '/public/uploads/recipes/' + req.file.filename;
     }
-    req.body.ingredients = JSON.parse(req.body.ingredients);        
+    req.body.ingredients = JSON.parse(req.body.ingredients);
     let recipe = {
         ...req.body,
         recipeImageURL: file,
@@ -70,6 +71,18 @@ const read = (req, res) => {
 
 //Updating an existing recipe
 const update = (req, res) => {
+    console.log(req.body);
+    let file = "";
+    console.log(req.file);
+    let url = req.protocol + '://' + req.get('host');
+    if (req.file) {
+        file = url + '/public/uploads/recipes/' + req.file.filename;
+    }
+    req.body.ingredients = JSON.parse(req.body.ingredients);
+    let recipe = {
+        ...req.body,
+        recipeImageURL: file,
+    };
     if (Object.keys(req.body).length === 0) {
         return res.status(400).json({
             error: 'Bad Request',
@@ -89,13 +102,95 @@ const update = (req, res) => {
 };
 
 //Deleting a recipe
-const remove = (req, res) => {
-    RecipeModel.findByIdAndRemove(req.params.id).exec()
-        .then(() => res.status(200).json({ message: `Recipe with id${req.params.id} was deleted` }))
-        .catch(error => res.status(500).json({
+const remove = async (req, res) => {
+
+    let recipe;
+    try {
+        recipe = await RecipeModel.findOne({ _id: req.params.id })
+            .populate('recipereviews').exec();
+        if (!recipe) {
+            return res.status(404).json({
+                error: 'Not found',
+                message: 'Recipe not found'
+            });
+        }
+    } catch (error) {
+        return res.status(404).json({
+            error: 'Not found',
+            message: 'Recipe not found'
+        });
+    }
+
+    try {
+        let reviews = recipe.recipereviews;
+        // console.log(reviews[0].imageCollection);
+        reviews.map(review => {
+            review.imageCollection.map(img => {
+                let path = './public/uploads/reviews/' + img.substr(img.lastIndexOf('/') + 1);
+                fs.access(path, fs.F_OK, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+
+                    fs.unlink(path, (err) => {
+                        if (err) throw err;
+                        // console.log('successfully deleted' + path);
+                    });
+                    // console.log(path);
+                })
+
+
+            });
+            review.videoCollection.map(vid => {
+                let path = './public/uploads/reviews/' + vid.substr(vid.lastIndexOf('/') + 1);
+                fs.access(path, fs.F_OK, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+
+                    fs.unlink(path, (err) => {
+                        if (err) throw err;
+                        // console.log('successfully deleted' + path);
+                    });
+                    // console.log(path);
+                })
+            });
+        })
+        await RecipeReviewModel.deleteMany({ recipe: recipe })
+            .then(ret => res.status(200).json({ message: `All Recipe Reviews Deleted.` }))
+            .catch(error => res.status(500).json({
+                error: 'Internal server error',
+                message: error.message
+            }));
+        
+        if(recipe.recipeImageURL){
+            let path = './public/uploads/recipes/' + recipe.recipeImageURL.substr(recipe.recipeImageURL.lastIndexOf('/') + 1);
+                fs.access(path, fs.F_OK, (err) => {
+                    if (err) {
+                        console.error(err)
+                        return
+                    }
+
+                    fs.unlink(path, (err) => {
+                        if (err) throw err;
+                    });
+                })
+        }
+
+        await recipe.remove();
+        res.status(200).json({ message: 'Recipe Deleted.' });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
             error: 'Internal server error',
             message: error.message
-        }));
+        });
+
+    }
+
 };
 
 //Listing all the recipes
@@ -166,8 +261,8 @@ const listRecipesByChefID = (req, res) => {
 
 
 //Viewing a recipe
-const readRecipeName = (req, res) => {
-    RecipeModel.findById(req.params.id)
+const readRecipeName = async (req, res) => {
+    await RecipeModel.findById(req.params.id)
         .select('title')
         .exec()
         .then(recipe => {
