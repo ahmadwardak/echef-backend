@@ -5,7 +5,7 @@ const router   = express.Router();
 
 const RecipeController = require('../controllers/recipeController');
 
-// List all categories
+// List all cooking levels
 router.get('/', RecipeController.listLevels); 
 
 module.exports = router;

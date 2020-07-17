@@ -5,11 +5,11 @@ const RecipeReviewModel = require('../models/recipeReviewModel');
 const _ = require('lodash');
 
 //Listing all categories
-//new comments in my branch....
 const listCategories = (req, res) => {
     res.status(200).json(categories);
 };
 
+//Listing all difficulty levels in cooking
 const listLevels = (req, res) => {
     res.status(200).json(difficultyLevels);
 };
@@ -21,8 +21,8 @@ const create = async (req, res) => {
         message: 'The request body is empty'
     });
 
+    //Taking care of images of a recipe
     let file = "";
-    console.log(req.file);
     let url = req.protocol + '://' + req.get('host');
     if (req.file) {
         file = url + '/public/uploads/recipes/' + req.file.filename;
@@ -71,9 +71,9 @@ const read = (req, res) => {
 
 //Updating an existing recipe
 const update = (req, res) => {
-    console.log(req.body);
+
+    //Taking care of images while updating a recipe
     let file = "";
-    console.log(req.file);
     let url = req.protocol + '://' + req.get('host');
     if (req.file) {
         file = url + '/public/uploads/recipes/' + req.file.filename;
@@ -121,9 +121,9 @@ const remove = async (req, res) => {
         });
     }
 
+    //Checking if there are any images and videos for reviews and deleting them
     try {
         let reviews = recipe.recipereviews;
-        // console.log(reviews[0].imageCollection);
         reviews.map(review => {
             review.imageCollection.map(img => {
                 let path = './public/uploads/reviews/' + img.substr(img.lastIndexOf('/') + 1);
@@ -137,7 +137,6 @@ const remove = async (req, res) => {
                         if (err) throw err;
                         // console.log('successfully deleted' + path);
                     });
-                    // console.log(path);
                 })
 
 
@@ -154,7 +153,6 @@ const remove = async (req, res) => {
                         if (err) throw err;
                         // console.log('successfully deleted' + path);
                     });
-                    // console.log(path);
                 })
             });
         })
@@ -165,6 +163,7 @@ const remove = async (req, res) => {
                 message: error.message
             }));
         
+        // Deleting the image of a recipe
         if(recipe.recipeImageURL){
             let path = './public/uploads/recipes/' + recipe.recipeImageURL.substr(recipe.recipeImageURL.lastIndexOf('/') + 1);
                 fs.access(path, fs.F_OK, (err) => {
@@ -223,20 +222,10 @@ const listRecipes = (req, res) => {
             error: 'Internal Server Error',
             message: error.message
         }));
-
-    // RecipeModel.find({})
-    //     .populate('createdByChef', '_id fullName')
-    //     .populate('recipereviews').exec()
-    //     .then(recipes => res.status(200).json(recipes))
-    //     .catch(error => res.status(500).json({
-    //         error: 'Internal server error',
-    //         message: error.message
-    //     }));
 };
 
 //Listing newest N  recipes
 const listNewRecipes = (req, res) => {
-    //console.log("One")
     RecipeModel.find({})
         .sort("-dateCreated")
         .limit(Number(req.params.amount))
@@ -246,7 +235,6 @@ const listNewRecipes = (req, res) => {
             error: 'Internal server error',
             message: error.message
         }));
-    //console.log("Three")
 };
 
 //Listing all the recipes created by a Chef
@@ -293,5 +281,4 @@ module.exports = {
     listRecipesByChefID,
     listNewRecipes,
     readRecipeName
-    // getAllCategories
 };
