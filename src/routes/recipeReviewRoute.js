@@ -38,7 +38,7 @@ const upload = multer({
     }
 });
 
-//POST a new review, middleware checkauth is added so only logged in user can add reviews
+//POST a new review, middleware checkauth is added so only logged in user can add reviews, and middleware upload using multer is added to upload images/videos
 router.post('/:recipe', middlewares.checkAuthentication, upload.array('fileCollection', 2), RecipeReviewController.addReview);
 //GET list of reviews for a recipe
 router.get('/:recipe', RecipeReviewController.listReviews);
