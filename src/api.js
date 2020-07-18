@@ -63,7 +63,6 @@ api.use('/public/uploads/recipes', express.static('public/uploads/recipes'));
 
 //use morgan here to handle not found error for route not found..... 
 api.use((req, res, next) => {
-    console.log('a');
     const error = new Error('Not Found');
     error.status = 404;
     next(error);

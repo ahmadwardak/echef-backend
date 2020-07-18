@@ -131,7 +131,6 @@ const register = (req, res) => {
                 })
             }
             else {
-                console.log(error);
                 res.status(500).json({
                     error: 'Internal server error',
                     message: error.message
@@ -193,7 +192,6 @@ const update = (req, res) => {
             updateUser.billingAddress = req.body.billingAddress;
 
             if (Object.prototype.hasOwnProperty.call(req.body, 'password')) {
-                console.log(req.body.password)
                 updateUser.password = bcrypt.hashSync(req.body.password, 8)
 
             };
@@ -208,7 +206,7 @@ const update = (req, res) => {
                     res.status(200).json({ token: null });
                 })
                 .catch(error => {
-                    console.log(error);
+                    // console.log(error);
                     res.status(500).json({
                         error: 'Internal server error',
                         message: error.message

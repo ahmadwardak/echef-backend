@@ -5,7 +5,7 @@ const IngredientModel = require('../models/ingredientModel');
 
 
 const getIngredient = async (request, response, next) => {
-    console.log("Get specific ingredient")
+    // console.log("Get specific ingredient")
     await IngredientModel.findById(request.params.id).then(ingr => {
         if (ingr) {
             response.json(ingr)
@@ -14,7 +14,7 @@ const getIngredient = async (request, response, next) => {
             response.status(404).end()
         }
     }).catch(error => {
-        console.error(error)
+        // console.error(error)
         response.status(400).send({ error: 'malformatted id' })
     }
     )
@@ -22,17 +22,17 @@ const getIngredient = async (request, response, next) => {
 }
 
 const getIngredients = async (request, response, next) => {
-    console.log("get All ingredients")
+    // console.log("get All ingredients")
     await IngredientModel.find({}).then(ingr => {
         response.json(ingr)
     })
 }
 
 const createIngredient = (request, response, next) => {
-    console.log("Create")
+    // console.log("Create")
 
     const ingredient = new IngredientModel(Object.assign(request.body))
-    console.log(ingredient)
+    // console.log(ingredient)
     ingredient.save().then(savedIngr => {
         response.json(savedIngr.toJSON())
     })
@@ -42,7 +42,7 @@ const createIngredient = (request, response, next) => {
 }
 
 const updateIngredient = (request, response, next) => {
-    console.log("Updating")
+    // console.log("Updating")
     const ingredient = Object.assign(request.body)
 
 
@@ -56,31 +56,13 @@ const updateIngredient = (request, response, next) => {
 }
 
 const deleteIngredient = (request, response, next) => {
-    console.log("Deleting")
+    // console.log("Deleting")
     IngredientModel.findByIdAndRemove(request.params.id)
         .then(() => {
             response.status(204).end()
         })
         .catch(error => next(error))
 }
-// Useless? We had it in the Class Diagram
-/* Unused
-const getTagsList = (request, response, next) => {
-    console.log("Get specific ingredient's Tags")
-    IngredientModel.findById(request.params.id).then(ingr => {
-        if (ingr) {
-            response.json(ingr.tags)
-        }
-        else {
-            response.status(404).end()
-        }
-    }).catch(error => {
-        console.error(error)
-        response.status(400).send({ error: 'malformatted id' })
-    }
-    )
-}
-*/
 
 module.exports = {
     getIngredient,

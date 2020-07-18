@@ -1,10 +1,10 @@
 "use strcit";
 
-const {ShoppingCartModel} = require('../models/shoppingCartModel');
+const { ShoppingCartModel } = require('../models/shoppingCartModel');
 
 
 //add to shopping cart
-const create = async(req, res) => {
+const create = async (req, res) => {
     if (Object.keys(req.body).length === 0) return res.status(400).json({
         error: 'Bad Request',
         message: 'The request body is empty'
@@ -19,10 +19,10 @@ const create = async(req, res) => {
 };
 
 //Viewing a shopping cart
-const getShoppingCartByUserID   = (req, res) => {
-    ShoppingCartModel.find({customerID:req.params.id}).exec()
+const getShoppingCartByUserID = (req, res) => {
+    ShoppingCartModel.find({ customerID: req.params.id }).exec()
         .then(cart => {
-            console.log(req);
+            // console.log(req);
             if (!cart) return res.status(404).json({
                 error: 'Not Found',
                 message: `Shopping  cart not found`
@@ -40,17 +40,17 @@ const getShoppingCartByUserID   = (req, res) => {
 
 //Updating cart
 const updateByUserID = (req, res) => {
-    if (Object.keys(req.body).length === 0)
-    {
+    if (Object.keys(req.body).length === 0) {
         return res.status(400).json({
             error: 'Bad Request',
             message: 'The request body is empty'
         });
     }
 
-    ShoppingCartModel.findOneAndUpdate({customerID:req.params.id},req.body,{
+    ShoppingCartModel.findOneAndUpdate({ customerID: req.params.id }, req.body, {
         new: true,
-        runValidators: true}).exec()
+        runValidators: true
+    }).exec()
         .then(cart => res.status(200).json(cart))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
@@ -58,13 +58,13 @@ const updateByUserID = (req, res) => {
         }));
 };
 //get cart items count
-const getShoppingCartRecipeCountByUserID   = (req, res) => {
-    ShoppingCartModel.find({customerID:req.params.id}).exec()
+const getShoppingCartRecipeCountByUserID = (req, res) => {
+    ShoppingCartModel.find({ customerID: req.params.id }).exec()
         .then(cart => {
-            console.log(req);
-            
+            // console.log(req);
+
             var response = 0;
-            if(cart.length!=0){
+            if (cart.length != 0) {
                 cart[0].cartItems.forEach(element => {
                     response = response + element.recipeIngredients.length;
                 });
@@ -80,8 +80,8 @@ const getShoppingCartRecipeCountByUserID   = (req, res) => {
 };
 
 const removeByUserID = (req, res) => {
-    ShoppingCartModel.findOneAndRemove({customerID:req.params.id}).exec()
-    .then((cart) => res.status(200).json({message: `Shopping cart was removed`}))
+    ShoppingCartModel.findOneAndRemove({ customerID: req.params.id }).exec()
+        .then((cart) => res.status(200).json({ message: `Shopping cart was removed` }))
         .catch(error => res.status(500).json({
             error: 'Internal server error',
             message: error.message
