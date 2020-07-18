@@ -36,7 +36,7 @@ const upload = multer({
 
 
 
-//Create a recipe
+//Create a recipe, middleware checkauth to allow only req with jwt token to add recipe, and multer/upload middleware to upload recipe image
 router.post('/', middlewares.checkAuthentication, upload.single('recipeImageURL'), RecipeController.create);
 //View a recipe
 router.get('/:id', RecipeController.read);
@@ -44,11 +44,11 @@ router.get('/:id', RecipeController.read);
 router.get('/', RecipeController.listRecipes);
 //Get newest N recipes
 router.get('/new/:amount', RecipeController.listNewRecipes);
-//Get all recipes by a chef
+//Get all recipes by a chef, middleware checkauth to allow only req with jwt token to view chef recipe,
 router.get('/chef/:id', middlewares.checkAuthentication, RecipeController.listRecipesByChefID);
-//Update a recipe
+//Update a recipe, middleware checkauth to allow only req with jwt token to update recipe, and multer/upload middleware to upload recipe image if provided
 router.put('/:id', middlewares.checkAuthentication, upload.single('recipeImageURL'), RecipeController.update);
-//Delete a recipe
+//Delete a recipe, middleware checkauth to allow only req with jwt token to delete recipe,
 router.delete('/:id', middlewares.checkAuthentication, RecipeController.remove);
 //Get Recipe Name
 router.get('/recipeName/:id', RecipeController.readRecipeName);
