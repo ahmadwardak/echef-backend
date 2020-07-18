@@ -21,7 +21,7 @@ const create = async (req, res) => {
         message: 'The request body is empty'
     });
 
-    //Taking care of images of a recipe
+    //creating a complete url for recipe image by adding host url before filename and storing it in recipeImageURL as string
     let file = "";
     let url = req.protocol + '://' + req.get('host');
     if (req.file) {
@@ -40,7 +40,7 @@ const create = async (req, res) => {
         }));
 };
 
-//Viewing a recipe
+//Viewing a recipe along with Overall rating obtained from recipe reviews
 const read = (req, res) => {
     RecipeModel.findById(req.params.id)
         .populate('recipereviews')
@@ -52,6 +52,7 @@ const read = (req, res) => {
                 message: `Recipe not found`
             });
 
+            //calculating the overall rating of the recipe
             var total = 0;
             for (var i = 0; i < _.size(recipe.recipereviews); i++) {
                 total += recipe.recipereviews[i].overallRating;
@@ -80,16 +81,18 @@ const update = async (req, res) => {
                 message: 'Recipe not found'
             });
         }
-        //Taking care of images while updating a recipe
-
-        let file = "";
-        let url = req.protocol + '://' + req.get('host');
+        //parse the ingredients provided as string into JSON
         req.body.ingredients = JSON.parse(req.body.ingredients);
 
+        //if recipe image is provided, then creating a complete url for recipe image by adding host url before filename 
+        // and storing it in recipeImageURL as string, replacing the old url
         if (req.file !== undefined) {
+            let file = "";
+            let url = req.protocol + '://' + req.get('host');
             file = url + '/public/uploads/recipes/' + req.file.filename;
             recipe.recipeImageURL = file;
         }
+
         recipe.title = req.body.title;
         recipe.servingSize = req.body.servingSize;
         recipe.description = req.body.description;
@@ -172,6 +175,8 @@ const remove = async (req, res) => {
                 })
             });
         })
+
+        //Delete all reviews related to the recipe
         await RecipeReviewModel.deleteMany({ recipe: recipe })
             .then(ret => res.status(200).json({ message: `All Recipe Reviews Deleted.` }))
             .catch(error => res.status(500).json({
@@ -193,7 +198,7 @@ const remove = async (req, res) => {
                 });
             })
         }
-
+        //finally remove the recipe itself
         await recipe.remove();
         res.status(200).json({ message: 'Recipe Deleted.' });
 
@@ -208,7 +213,7 @@ const remove = async (req, res) => {
 
 };
 
-//Listing all the recipes
+//Listing all the recipes along with chef name and reviews. Plus recipe overall rating is also calculated and added to the recipe
 const listRecipes = (req, res) => {
     RecipeModel.find({})
         .populate('createdByChef', '_id fullName')
@@ -221,6 +226,7 @@ const listRecipes = (req, res) => {
                 message: `No receipes found`
             });
 
+            //calculating the overall rating from the reviews if exist
             recipes.map(function (recipe) {
                 var total = 0;
                 for (var i = 0; i < _.size(recipe.recipereviews); i++) {

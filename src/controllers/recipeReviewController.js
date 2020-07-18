@@ -2,10 +2,8 @@
 
 const RecipeReviewModel = require('../models/recipeReviewModel');
 const { RecipeModel } = require('../models/recipeModel');
-const { UserModel } = require('../models/userModel');
 
-
-
+//Listing all reviews
 const listReviews = (req, res) => {
     RecipeReviewModel.find({ recipe: req.params.recipe })
         .populate('addedbyUser', '_id fullName')
@@ -17,6 +15,7 @@ const listReviews = (req, res) => {
         }));
 };
 
+//Getting a review along with recipe title and added by user full name
 const getReview = (req, res) => {
     RecipeReviewModel.findOne({ _id: req.params.id }).populate('addedbyUser', '_id fullName')
         .populate('recipe', '_id title').exec()
@@ -27,7 +26,7 @@ const getReview = (req, res) => {
         }));
 };
 
-
+//Add a new review
 const addReview = async (req, res) => {
 
     if (Object.keys(req.body).length === 0) return res.status(400).json({
@@ -50,8 +49,6 @@ const addReview = async (req, res) => {
         message: 'Review must be added by Customer being logged in'
     });
 
-    //const user = await UserModel.findOne({ _id: req.body.addedbyUser._id }).exec();
-
     if (!Object.prototype.hasOwnProperty.call(req.body, 'overallRating')) return res.status(400).json({
         error: 'Bad Request',
         message: 'Http request body must have overallRating property'
@@ -67,11 +64,16 @@ const addReview = async (req, res) => {
         message: 'Http request body must have valueForMoneyRating property'
     });
 
+    //Array of video types to separate uploaded images and videos into respective array by checking filetype in filename
     const videoTypes = ['mp4', 'mov', 'wmv', 'avi', 'mpg'];
 
     const reqImageFiles = [];
     const reqVideoFiles = [];
-    const url = req.protocol + '://' + req.get('host');
+    const url = req.protocol + '://' + req.get('host'); //getting the host url
+
+    //if user provides images and videos as part of the review, here we separate them into different,
+    // and host url is adding to create a full image or video urls array
+    // to be stored in imageCollection and videoCollection
     if (req.files.length > 0) {
         for (var i = 0; i < req.files.length; i++) {
             var filetype = req.files[i].filename.substr(req.files[i].filename.lastIndexOf('.') + 1);
@@ -89,12 +91,16 @@ const addReview = async (req, res) => {
         imageCollection: reqImageFiles,
         videoCollection: reqVideoFiles
     };
+
     try {
+        //create the new review
         review = await RecipeReviewModel.create(review);
+
+        //updating the recipe by adding the review id to recipe.recipereviews
         const recipeSel = await RecipeModel.findOneAndUpdate({ _id: req.body.recipe }, { $addToSet: { 'recipereviews': review } }, function (error, success) {
             //...
         });
-
+        //return the newly created recipe review along with user fullname and recipe title
         review = await review.populate('addedbyUser', '_id fullName')
             .populate('recipe', '_id title').execPopulate();
         res.status(201).json({ message: review, recipeID: review.recipe._id });

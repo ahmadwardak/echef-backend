@@ -57,7 +57,7 @@ api.use('/levels', levels);
 api.use('/order', order);
 api.use('/shoppingCart', shoppingCart);
 
-//Static files
+//Static files to serve the images for reviews and recipes
 api.use('/public/uploads/reviews', express.static('public/uploads/reviews'));
 api.use('/public/uploads/recipes', express.static('public/uploads/recipes'));
 
