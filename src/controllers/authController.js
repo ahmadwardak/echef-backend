@@ -141,14 +141,17 @@ const register = (req, res) => {
 };
 
 
-
 const update = (req, res) => {
+
+    // update function will not update username and email. 
+    // Only fullName, accountType, address, shippingAddress, billlingAddress and PASSWORD
 
     if (!Object.prototype.hasOwnProperty.call(req.body, 'username')) return res.status(400).json({
         error: 'Bad Request',
         message: 'Http request body must have username property'
     });
 
+    //find user
     UserModel.findOne({ username: req.body.username }).exec()
         .then(user => {
 
@@ -191,6 +194,7 @@ const update = (req, res) => {
 
             updateUser.billingAddress = req.body.billingAddress;
 
+            //encrypt the new password if provided and update it in document.
             if (Object.prototype.hasOwnProperty.call(req.body, 'password')) {
                 updateUser.password = bcrypt.hashSync(req.body.password, 8)
 
@@ -226,7 +230,7 @@ const update = (req, res) => {
 
 };
 
-
+//Current Logged In User
 const currentUser = (req, res) => {
     UserModel.findById(req.userID).select('username').exec()
         .then(user => {

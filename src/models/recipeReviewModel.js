@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const SchemaTypes = mongoose.SchemaTypes;
 
 const Float = require('mongoose-float').loadType(mongoose);
-
+//Recipe Review Model
 const RecipeReviewSchema = new mongoose.Schema({
     addedbyUser: {
         type: mongoose.Schema.Types.ObjectId,
