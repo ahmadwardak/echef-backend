@@ -70,35 +70,51 @@ const read = (req, res) => {
 
 
 //Updating an existing recipe
-const update = (req, res) => {
+const update = async (req, res) => {
 
-    //Taking care of images while updating a recipe
-    let file = "";
-    let url = req.protocol + '://' + req.get('host');
-    if (req.file) {
-        file = url + '/public/uploads/recipes/' + req.file.filename;
-    }
-    req.body.ingredients = JSON.parse(req.body.ingredients);
-    let recipe = {
-        ...req.body,
-        recipeImageURL: file,
-    };
-    if (Object.keys(req.body).length === 0) {
-        return res.status(400).json({
-            error: 'Bad Request',
-            message: 'The request body is empty'
+    try {
+        let recipe = await RecipeModel.findOne({ _id: req.params.id }).exec();
+        if (!recipe) {
+            return res.status(404).json({
+                error: 'Not found',
+                message: 'Recipe not found'
+            });
+        }
+        //Taking care of images while updating a recipe
+
+        let file = "";
+        let url = req.protocol + '://' + req.get('host');
+        req.body.ingredients = JSON.parse(req.body.ingredients);
+
+        if (req.file !== undefined) {
+            file = url + '/public/uploads/recipes/' + req.file.filename;
+            recipe.recipeImageURL = file;
+        }
+        recipe.title = req.body.title;
+        recipe.servingSize = req.body.servingSize;
+        recipe.description = req.body.description;
+        recipe.difficulty = req.body.difficulty;
+        recipe.category = req.body.category;
+        recipe.ingredients = req.body.ingredients;
+
+        recipe.save(function (error) {
+            if (error)
+                res.status(500).json({
+                    error: 'Internal server error',
+                    message: error.message
+                })
+            else
+
+                res.status(200).json(recipe);
+        });
+
+    } catch (error) {
+        return res.status(404).json({
+            error: 'Internal server error',
+            message: error.message
         });
     }
 
-    RecipeModel.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    }).exec()
-        .then(recipe => res.status(200).json(recipe))
-        .catch(error => res.status(500).json({
-            error: 'Internal server error',
-            message: error.message
-        }));
 };
 
 //Deleting a recipe
@@ -162,20 +178,20 @@ const remove = async (req, res) => {
                 error: 'Internal server error',
                 message: error.message
             }));
-        
-        // Deleting the image of a recipe
-        if(recipe.recipeImageURL){
-            let path = './public/uploads/recipes/' + recipe.recipeImageURL.substr(recipe.recipeImageURL.lastIndexOf('/') + 1);
-                fs.access(path, fs.F_OK, (err) => {
-                    if (err) {
-                        console.error(err)
-                        return
-                    }
 
-                    fs.unlink(path, (err) => {
-                        if (err) throw err;
-                    });
-                })
+        // Deleting the image of a recipe
+        if (recipe.recipeImageURL) {
+            let path = './public/uploads/recipes/' + recipe.recipeImageURL.substr(recipe.recipeImageURL.lastIndexOf('/') + 1);
+            fs.access(path, fs.F_OK, (err) => {
+                if (err) {
+                    console.error(err)
+                    return
+                }
+
+                fs.unlink(path, (err) => {
+                    if (err) throw err;
+                });
+            })
         }
 
         await recipe.remove();
