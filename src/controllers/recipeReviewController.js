@@ -3,9 +3,10 @@
 const RecipeReviewModel = require('../models/recipeReviewModel');
 const { RecipeModel } = require('../models/recipeModel');
 
-//Listing all reviews
+//Listing all reviews by recipe
 const listReviews = (req, res) => {
     RecipeReviewModel.find({ recipe: req.params.recipe })
+        .sort("-dateCreated")
         .populate('addedbyUser', '_id fullName')
         .populate('recipe', '_id title').exec()
         .then(reviews => res.status(200).json(reviews))
