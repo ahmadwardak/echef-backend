@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"echef.shoppingcarts"}],"uuid":"d56a1d35b02648f0894e3f540873a3d0"}
